@@ -1,10 +1,11 @@
 __author__ = 'Jeffrey'
 
-'''from flask import request, jsonify
-from brink import app
+from flask import request, jsonify
+from main import app
 from brinkService import updateBrink
 
-@app.route('/commit', methods=['POST'])
+#TODO: figure out why I can't move views here, and why packages won't work
+'''@app.route('/commit', methods=['POST'])
 def commit():
     n = request.json['name']
     b = int(request.json['brinkPoint'])

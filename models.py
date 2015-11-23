@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text
+from sqlalchemy import Column, Integer, Text, Boolean
 
 __author__ = 'Jeffrey'
 
@@ -8,6 +8,7 @@ class Brink(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(Text, unique=False)
     description = Column(Text, unique=False)
+    flipped = Column(Boolean, unique=False)
 
 class Commit(db.Model):
     id = Column(Integer, primary_key=True)
