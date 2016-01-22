@@ -2,6 +2,17 @@ __author__ = 'Jeffrey'
 from models import Commit, Brink
 from shared import db
 
+
+def createBrink(title, description, creatorId):
+    b = Brink()
+    b.title = title
+    b.description = description
+    b.flipped = False
+    #TODO: validation here or in view
+    db.session.add(b)
+    db.session.commit()
+
+
 def updateBrink(name, brinkPoint, brinkId):
     c = Commit()
     c.brinkPoint = brinkPoint
@@ -12,7 +23,6 @@ def updateBrink(name, brinkPoint, brinkId):
     db.session.commit()
     associatedBrink = Brink.query.filter(Brink.id == brinkId).first()
     commits = Commit.query.filter(Commit.brinkId == brinkId).all()
-
     calculateFlip(commits, associatedBrink)
 
 
