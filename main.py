@@ -1,7 +1,7 @@
 __author__ = 'Jeffrey'
 
 from flask.ext.restless import APIManager
-from flask import Flask, request, redirect, url_for, render_template, session, flash
+from flask import Flask, request, redirect, url_for, render_template, session, flash, jsonify
 from shared import db
 from models import Brink, Commit
 from brinkService import updateBrink, createBrink
@@ -69,9 +69,7 @@ def commit():
     brinkPoint = int(request.form['brinkPoint'])
     updateBrink(name, brinkPoint, 1)
     #append success message here
-    return render_template('brink.html')
-    #return render_template('show_')
-    #return jsonify(name=n, brinkPoint=b)
+    return jsonify(name=name, brinkPoint=brinkPoint)
 
 
 '''
