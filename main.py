@@ -14,16 +14,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///brink.db'
 with app.app_context():
     db.create_all()
     api_manager = APIManager(app, flask_sqlalchemy_db=db)
-    api_manager.create_api(Brink, methods=['GET', 'POST', 'DELETE', 'PUT'])
+    api_manager.create_api(Brink, methods=['GET', 'DELETE', 'PUT', 'POST'])
     api_manager.create_api(Commit, methods=['GET', 'DELETE', 'PUT'])
-    #b = Brink()
-
-    #placerholder seed data
-    '''b.title = "Lets march on washington"
-    b.description = "leggo"
-    b.flipped = False;
-    db.session.add(b)
-    db.session.commit()'''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -62,6 +54,11 @@ def brink(brinkId):
     #TODO: lookup brink information
     return render_template('brink.html')
 
+
+@app.route('/brink', methods=['POST'])
+def postBrink():
+    requested = request.get_json()
+    print(title)
 
 @app.route('/commit', methods=['POST'])
 def commit():

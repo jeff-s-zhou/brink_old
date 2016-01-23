@@ -24,9 +24,12 @@ var BrinkPage = React.createClass({
         JQuery.ajax({
             //TODO: figure out how to pass props through react-router
             url: "/api/brink",
+            contentType: "application/json",
             dataType: "json",
             cache: false,
             success: function(data) {
+                //only has 10 responses because
+                // http://flask-restless.readthedocs.org/en/latest/requestformat.html#clientpagination
                 this.setState({data: data.objects});
             }.bind(this),
             error: function(xhr, status, err) {
@@ -34,8 +37,20 @@ var BrinkPage = React.createClass({
             }.bind(this)
         });
     },
-    handleBrinkSubmit: function(comment) {
-        // TODO: submit to the server and refresh
+    handleBrinkSubmit: function(brink) {
+        JQuery.ajax({
+            url: "/api/brink",
+            contentType: "application/json",
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify(brink),//brink,
+            success: function(data) {
+                this.setState({data: this.state.data.concat([data])});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error("/api/brink", status, err.toString());
+            }.bind(this)
+        });
     },
     getInitialState: function() {
         return{data: []};
@@ -45,6 +60,7 @@ var BrinkPage = React.createClass({
         setInterval(this.loadCommentsFromServer, 2000);
     },
     render: function() {
+        console.log("state data: " + this.state.data);
     return (
         <div className="brinkPage">
         <h1>Brinks</h1>
@@ -58,6 +74,7 @@ var BrinkPage = React.createClass({
 //list of brinks to be displayed on brinks page
 var BrinkList = React.createClass({
     render: function() {
+        console.log("rows: " + this.props.data);
         var brinkEntries = this.props.data.map(function(brinkEntry) {
             return (
                 <BrinkEntry key={brinkEntry.id}

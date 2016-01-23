@@ -123,9 +123,11 @@ var BrinkPage = React.createClass({
         JQuery.ajax({
             //TODO: figure out how to pass props through react-router
             url: "/api/brink",
+            contentType: "application/json",
             dataType: "json",
             cache: false,
             success: function (data) {
+                console.log(data);
                 this.setState({ data: data.objects });
             }.bind(this),
             error: function (xhr, status, err) {
@@ -133,8 +135,22 @@ var BrinkPage = React.createClass({
             }.bind(this)
         });
     },
-    handleBrinkSubmit: function (comment) {
-        // TODO: submit to the server and refresh
+    handleBrinkSubmit: function (brink) {
+        JQuery.ajax({
+            url: "/api/brink",
+            contentType: "application/json",
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify(brink), //brink,
+            success: function (data) {
+                console.log(this.state.data);
+                this.setState({ data: this.state.data.concat([data]) });
+                console.log(this.state.data);
+            }.bind(this),
+            error: function (xhr, status, err) {
+                console.error("/api/brink", status, err.toString());
+            }.bind(this)
+        });
     },
     getInitialState: function () {
         return { data: [] };
@@ -144,6 +160,7 @@ var BrinkPage = React.createClass({
         setInterval(this.loadCommentsFromServer, 2000);
     },
     render: function () {
+        console.log("state data: " + this.state.data);
         return React.createElement(
             'div',
             { className: 'brinkPage' },
@@ -163,6 +180,7 @@ var BrinkList = React.createClass({
     displayName: 'BrinkList',
 
     render: function () {
+        console.log("rows: " + this.props.data);
         var brinkEntries = this.props.data.map(function (brinkEntry) {
             return React.createElement(BrinkEntry, { key: brinkEntry.id,
                 title: brinkEntry.title,
