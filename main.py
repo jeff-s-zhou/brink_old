@@ -55,11 +55,6 @@ def brink(brinkId):
     return render_template('brink.html')
 
 
-@app.route('/brink', methods=['POST'])
-def postBrink():
-    requested = request.get_json()
-    print(title)
-
 @app.route('/commit', methods=['POST'])
 def commit():
     name = request.form['name']
