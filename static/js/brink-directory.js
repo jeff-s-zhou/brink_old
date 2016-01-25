@@ -47,16 +47,19 @@ module.exports = BrinkDirectory = React.createClass({
         });
     },
     getInitialState: function() {
-        return{data: []};
+        return{data: [], intervalId: 0};
     },
     componentDidMount: function() {
         this.loadBrinkEntriesFromServer();
-        setInterval(this.loadCommentsFromServer, 2000);
+        this.setState({intervalId: setInterval(this.loadBrinkEntriesFromServer, 2000)});
+    },
+    componentWillUnmount: function() {
+        clearInterval(this.state.intervalId);
     },
     render: function() {
     return (
         <div className="brinkDirectory">
-        <h1>Brinks</h1>
+        <h2>Brinks</h2>
         <BrinkList data={this.state.data}/>
         <BrinkForm onBrinkSubmit={this.handleBrinkSubmit} />
         </div>
@@ -78,7 +81,6 @@ var BrinkList = React.createClass({
         });
     return (
         <div className="brinkList">
-            <h2>Brink List</h2>
             {brinkEntries}
         </div>
     );
@@ -120,7 +122,7 @@ var BrinkForm = React.createClass({
     render: function() {
     return (
         <div>
-            <h1>Brink Form</h1>
+            <h2>Create Brink</h2>
             <form className="brinkForm" onSubmit={this.handleSubmit}>
                 <input
                     type="text"

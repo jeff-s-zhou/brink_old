@@ -2,17 +2,6 @@ __author__ = 'Jeffrey'
 from models import Commit, Brink
 from shared import db
 
-
-def createBrink(title, description, creatorId):
-    b = Brink()
-    b.title = title
-    b.description = description
-    b.flipped = False
-    #TODO: validation here or in view
-    db.session.add(b)
-    db.session.commit()
-
-
 def updateBrink(name, brinkPoint, brinkId):
     c = Commit()
     c.brinkPoint = brinkPoint

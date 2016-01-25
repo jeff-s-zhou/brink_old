@@ -4,7 +4,7 @@ from flask.ext.restless import APIManager
 from flask import Flask, request, redirect, url_for, render_template, session, flash, jsonify
 from shared import db
 from models import Brink, Commit
-from brinkService import updateBrink, createBrink
+from brinkService import updateBrink
 
 app = Flask('brink', static_url_path='')
 db.init_app(app)

@@ -8,7 +8,7 @@ module.exports = About = React.createClass({
     render: function() {
     return (
         <div className="about">
-        <h1>About</h1>
+        <h2>About</h2>
         <p>Built in ReactJS by Coding For Change</p>
         </div>
     );
