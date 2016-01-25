@@ -23,7 +23,7 @@ def updateBrink(name, brinkPoint, brinkId):
     db.session.commit()
     associatedBrink = Brink.query.filter(Brink.id == brinkId).first()
     commits = Commit.query.filter(Commit.brinkId == brinkId).all()
-    calculateFlip(commits, associatedBrink)
+    return calculateFlip(commits, associatedBrink)
 
 
 def calculateFlip(commits, associatedBrink):
@@ -33,3 +33,4 @@ def calculateFlip(commits, associatedBrink):
         if i+1 >= c.brinkPoint:
             associatedBrink.flipped = True
             db.session.commit()
+    return associatedBrink.flipped

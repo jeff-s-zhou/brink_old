@@ -41,28 +41,14 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/create', methods=['POST'])
-def create():
-    title = request.form['title']
-    description = request.form['description']
-    Brink = createBrink(title, description)
-    return redirect(url_for('brink'), Brink.id)
-
-
-@app.route('/brink/<brinkId>')
-def brink(brinkId):
-    #TODO: lookup brink information
-    return render_template('brink.html')
-
-
 @app.route('/commit', methods=['POST'])
-def commit():
-    name = request.form['name']
-    brinkPoint = int(request.form['brinkPoint'])
-    updateBrink(name, brinkPoint, 1)
+def commitUser():
+    brinkId = request.json['brinkId']
+    name = request.json['name']
+    brinkPoint = int(request.json['brinkPoint'])
+    flipped = updateBrink(name, brinkPoint, brinkId)
     #append success message here
-    return jsonify(name=name, brinkPoint=brinkPoint)
-
+    return jsonify(name=name, brinkPoint=brinkPoint, flipped=flipped)
 
 '''
 index. can create a brink from here

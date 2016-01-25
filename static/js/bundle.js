@@ -161,7 +161,7 @@ module.exports = BrinkDirectory = React.createClass({
             contentType: "application/json",
             dataType: "json",
             type: "POST",
-            data: JSON.stringify(brink), //brink,
+            data: JSON.stringify(brink),
             success: function (data) {
                 this.setState({ data: this.state.data.concat([data]) });
             }.bind(this),
@@ -225,15 +225,9 @@ var BrinkEntry = React.createClass({
             'div',
             { className: 'brinkEntry' },
             React.createElement(
-                'p',
-                null,
-                'Brink Entry'
-            ),
-            this.props.title,
-            React.createElement(
                 Link,
                 { to: "/brink/" + this.props.id },
-                'link'
+                this.props.title
             )
         );
     }
@@ -273,7 +267,7 @@ var BrinkForm = React.createClass({
             ),
             React.createElement(
                 'form',
-                { className: 'commentForm', onSubmit: this.handleSubmit },
+                { className: 'brinkForm', onSubmit: this.handleSubmit },
                 React.createElement('input', {
                     type: 'text',
                     placeholder: 'Title',
@@ -317,7 +311,23 @@ module.exports = Brink = React.createClass({
             dataType: "json",
             cache: false,
             success: function (data) {
-                this.setState({ data: data });
+                this.setState({ title: data.title, description: data.description, flipped: data.flipped });
+            }.bind(this),
+            error: function (xhr, status, err) {
+                console.error("/api/brink", status, err.toString());
+            }.bind(this)
+        });
+    },
+
+    handleCommitSubmit: function (commit) {
+        JQuery.ajax({
+            url: "/commit",
+            contentType: "application/json",
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify(commit),
+            success: function (data) {
+                this.setState({ flipped: data.flipped });
             }.bind(this),
             error: function (xhr, status, err) {
                 console.error("/api/brink", status, err.toString());
@@ -326,12 +336,11 @@ module.exports = Brink = React.createClass({
     },
 
     componentDidMount() {
-        console.log(this.props.params.brinkId);
         this.loadBrinkFromServer(this.props.params.brinkId);
     },
 
     getInitialState() {
-        return { data: { title: "", description: "" } };
+        return { title: "", description: "", flipped: false };
     },
 
     render: function () {
@@ -341,22 +350,20 @@ module.exports = Brink = React.createClass({
             React.createElement(
                 'h1',
                 null,
-                this.state.data.title
+                this.state.title
             ),
-            this.state.data.description
-        );
-    }
-});
-
-//the info for every brink
-var BrinkInfo = React.createClass({
-    displayName: 'BrinkInfo',
-
-    render: function () {
-        return React.createElement(
-            'h2',
-            null,
-            'BrinkInfo'
+            React.createElement(
+                'p',
+                null,
+                this.state.description
+            ),
+            React.createElement(
+                'p',
+                null,
+                "flipped: " + this.state.flipped.toString()
+            ),
+            React.createElement(CommitForm, { onCommitSubmit: this.handleCommitSubmit,
+                brinkId: this.props.params.brinkId })
         );
     }
 });
@@ -365,11 +372,53 @@ var BrinkInfo = React.createClass({
 var CommitForm = React.createClass({
     displayName: 'CommitForm',
 
+    getInitialState: function () {
+        return { name: '', brinkPoint: '' };
+    },
+    handleNameChange: function (e) {
+        this.setState({ name: e.target.value });
+    },
+    handleBrinkPointChange: function (e) {
+        this.setState({ brinkPoint: e.target.value });
+    },
+    handleSubmit: function (e) {
+        e.preventDefault();
+        var name = this.state.name.trim();
+        var brinkPoint = this.state.brinkPoint.trim();
+        var brinkId = this.props.brinkId;
+        if (!name || !brinkPoint) {
+            return;
+        }
+        this.props.onCommitSubmit({ name: name, brinkPoint: brinkPoint, brinkId: brinkId });
+        this.setState({ name: '', brinkPoint: '' });
+    },
     render: function () {
         return React.createElement(
-            'h1',
+            'div',
             null,
-            'Commit Form'
+            React.createElement(
+                'h1',
+                null,
+                'Brink Form'
+            ),
+            React.createElement(
+                'form',
+                { className: 'commitForm', onSubmit: this.handleSubmit },
+                React.createElement('input', {
+                    type: 'text',
+                    placeholder: 'Name',
+                    value: this.state.name,
+                    onChange: this.handleNameChange
+                }),
+                React.createElement('br', null),
+                React.createElement('input', {
+                    type: 'number',
+                    value: this.state.brinkPoint,
+                    onChange: this.handleBrinkPointChange
+                }),
+                React.createElement('br', null),
+                React.createElement('input', { type: 'submit', value: 'Post' })
+            )
         );
     }
 });

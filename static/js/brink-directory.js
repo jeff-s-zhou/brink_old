@@ -37,7 +37,7 @@ module.exports = BrinkDirectory = React.createClass({
             contentType: "application/json",
             dataType: "json",
             type: "POST",
-            data: JSON.stringify(brink),//brink,
+            data: JSON.stringify(brink),
             success: function(data) {
                 this.setState({data: this.state.data.concat([data])});
             }.bind(this),
@@ -90,9 +90,7 @@ var BrinkEntry = React.createClass({
     render: function() {
     return (
         <div className="brinkEntry">
-            <p>Brink Entry</p>
-            {this.props.title}
-            <Link to={("/brink/" + this.props.id)}>link</Link>
+            <Link to={("/brink/" + this.props.id)}>{this.props.title}</Link>
         </div>
     );
   }
@@ -123,7 +121,7 @@ var BrinkForm = React.createClass({
     return (
         <div>
             <h1>Brink Form</h1>
-            <form className="commentForm" onSubmit={this.handleSubmit}>
+            <form className="brinkForm" onSubmit={this.handleSubmit}>
                 <input
                     type="text"
                     placeholder="Title"
