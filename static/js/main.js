@@ -6,6 +6,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Router = require('react-router/lib/Router');
 var Route = require('react-router/lib/Route');
+var IndexRoute = require('react-router/lib/IndexRoute');
 var Link = require('react-router/lib/Link');
 var JQuery = require('jquery');
 
@@ -24,9 +25,7 @@ var LinkContainer = require('react-router-bootstrap/lib/LinkContainer');
 var BrinkDirectory = require('./brink-directory');
 var Brink = require('./brink');
 var About = require('./about');
-
-var AboutLink = <Link to="/about">About</Link>;
-var BrinkLink = <Link to="/brinks">Brinks</Link>;
+var Home = require('./home');
 
 var App = React.createClass({
   render: function() {
@@ -69,8 +68,8 @@ var App = React.createClass({
 ReactDOM.render((
   <Router>
     <Route path="/" component={App}>
-        <Route path="brinks" component={BrinkDirectory}>
-        </Route>
+        <IndexRoute component={Home} />
+        <Route path="brinks" component={BrinkDirectory} />
         <Route path="about" component={About} />
         <Route path="brink/:brinkId" component={Brink} />
     </Route>

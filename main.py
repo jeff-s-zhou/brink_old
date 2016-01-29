@@ -4,7 +4,7 @@ from flask.ext.restless import APIManager
 from flask import Flask, request, redirect, url_for, render_template, session, flash, jsonify
 from shared import db
 from models import Brink, Commit
-from brinkService import updateBrink
+from brinkService import updateBrink, getAssociatedCommits
 
 app = Flask('brink', static_url_path='')
 db.init_app(app)
@@ -15,7 +15,6 @@ with app.app_context():
     db.create_all()
     api_manager = APIManager(app, flask_sqlalchemy_db=db)
     api_manager.create_api(Brink, methods=['GET', 'DELETE', 'PUT', 'POST'])
-    api_manager.create_api(Commit, methods=['GET', 'DELETE', 'PUT'])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,6 +48,14 @@ def commitUser():
     flipped = updateBrink(name, brinkPoint, brinkId)
     #append success message here
     return jsonify(name=name, brinkPoint=brinkPoint, flipped=flipped)
+
+
+@app.route('/get_commits', methods=['GET'])
+def getBrinkCommits():
+    brinkId = request.json['brinkId']
+    associatedCommits = getAssociatedCommits(brinkId)
+    return jsonify(commits=AssociatedCommits)
+
 
 '''
 index. can create a brink from here

@@ -8,6 +8,8 @@ class Brink(db.Model):
     id = Column(Integer, primary_key=True)
     title = Column(Text, unique=False)
     description = Column(Text, unique=False)
+    #store the highest brink point, so every commit with a smaller brink is automatically flipped
+    brinkPoint = Column(Integer, unique=False)
     flipped = Column(Boolean, unique=False)
 
 class Commit(db.Model):
@@ -15,3 +17,4 @@ class Commit(db.Model):
     name = Column(Text, unique=False)
     brinkPoint = Column(Integer, unique=False)
     brinkId = Column(Integer, unique=False)
+    flipped = Column(Boolean, unique=False)
