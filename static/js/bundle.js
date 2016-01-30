@@ -317,6 +317,24 @@ module.exports = Brink = React.createClass({
         });
     },
 
+    loadCommitsFromServer: function (brinkId) {
+        console.log(brinkId);
+        JQuery.ajax({
+            //we use a special route and not the public api because we don't want the info public
+            url: "/get_commits/" + brinkId,
+            contentType: "application/json",
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                console.log(data);
+                this.setState({ flippedCommits: data });
+            }.bind(this),
+            error: function (xhr, status, err) {
+                console.error("/get_commits", status, err.toString());
+            }.bind(this)
+        });
+    },
+
     handleCommitSubmit: function (commit) {
         JQuery.ajax({
             url: "/commit",
@@ -335,10 +353,18 @@ module.exports = Brink = React.createClass({
 
     componentDidMount() {
         this.loadBrinkFromServer(this.props.params.brinkId);
+        this.loadCommitsFromServer(this.props.params.brinkId);
+        this.setState({ intervalId: setInterval(function () {
+                this.loadCommitsFromServer(this.props.params.brinkId);
+            }.bind(this), 2000) });
+    },
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalId);
     },
 
     getInitialState() {
-        return { title: "", description: "", flipped: false };
+        return { title: "", description: "", flipped: false, flippedCommits: [], intervalId: 0 };
     },
 
     render: function () {
@@ -363,6 +389,18 @@ module.exports = Brink = React.createClass({
             React.createElement(CommitForm, { onCommitSubmit: this.handleCommitSubmit,
                 brinkId: this.props.params.brinkId })
         );
+    }
+});
+
+//displays ongoing flipped commits
+var Ticker = React.createClass({
+    displayName: 'Ticker',
+
+    getInitialState: function () {
+        return { name: '' };
+    },
+    render: function () {
+        return React.createElement('div', null);
     }
 });
 

@@ -27,21 +27,20 @@ module.exports = Brink = React.createClass({
         });
     },
 
-    loadCommitsFromServer: function() {
+    loadCommitsFromServer: function(brinkId) {
+        console.log(brinkId);
         JQuery.ajax({
             //we use a special route and not the public api because we don't want the info public
-            url: "/get_commits",
+            url: ("/get_commits/" + brinkId),
             contentType: "application/json",
             dataType: "json",
             cache: false,
             success: function(data) {
-                //TODO: only has 10 responses because
-                //http://flask-restless.readthedocs.org/en/latest/requestformat.html#clientpagination
-                //implement pagination
-                this.setState({commits: data});
+                console.log(data);
+                this.setState({flippedCommits: data});
             }.bind(this),
             error: function(xhr, status, err) {
-                console.error("/api/brink", status, err.toString());
+                console.error("/get_commits", status, err.toString());
             }.bind(this)
         });
     },
@@ -64,10 +63,18 @@ module.exports = Brink = React.createClass({
 
     componentDidMount(){
         this.loadBrinkFromServer(this.props.params.brinkId);
+        this.loadCommitsFromServer(this.props.params.brinkId);
+        //need to bind the context of this inside the function
+        this.setState({intervalId: setInterval(
+            function() {this.loadCommitsFromServer(this.props.params.brinkId); }.bind(this), 2000)});
+    },
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalId);
     },
 
     getInitialState(){
-        return {title: "", description: "", flipped:false}
+        return {title: "", description: "", flipped:false, flippedCommits: [], intervalId: 0}
     },
 
     render: function() {
@@ -83,31 +90,14 @@ module.exports = Brink = React.createClass({
   }
 });
 
-//the form for a commit
+//displays ongoing flipped commits
 var Ticker = React.createClass({
     getInitialState: function() {
-        return {name: '', brinkPoint: ''}
+        return {name: ''}
     },
     render: function() {
     return (
         <div>
-            <h1>Brink Form</h1>
-            <form className="commitForm" onSubmit={this.handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Name"
-                    value={this.state.name}
-                    onChange={this.handleNameChange}
-                />
-                <br />
-                <input
-                    type="number"
-                    value={this.state.brinkPoint}
-                    onChange={this.handleBrinkPointChange}
-                />
-                <br />
-                <input type="submit" value="Post" />
-            </form>
         </div>
     );
   }

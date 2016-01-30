@@ -2,12 +2,11 @@ __author__ = 'Jeffrey'
 from models import Commit, Brink
 from shared import db
 
-def getAssociatedCommits(brinkId):
-    commits = Commit.query.filter(Commit.brinkId == brinkId).all()
+def getAssociatedFlippedCommits(brinkId):
+    commits = Commit.query.filter(Commit.brinkId == brinkId and Commit.flipped == True).all()
     return commits
 
 def updateBrink(name, brinkPoint, brinkId):
-
     #TODO: refactor to use an associated user
     c = Commit()
     c.brinkPoint = brinkPoint

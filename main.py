@@ -3,8 +3,8 @@ __author__ = 'Jeffrey'
 from flask.ext.restless import APIManager
 from flask import Flask, request, redirect, url_for, render_template, session, flash, jsonify
 from shared import db
-from models import Brink, Commit
-from brinkService import updateBrink, getAssociatedCommits
+from models import Brink
+from brinkService import updateBrink, getAssociatedFlippedCommits
 
 app = Flask('brink', static_url_path='')
 db.init_app(app)
@@ -50,11 +50,10 @@ def commitUser():
     return jsonify(name=name, brinkPoint=brinkPoint, flipped=flipped)
 
 
-@app.route('/get_commits', methods=['GET'])
-def getBrinkCommits():
-    brinkId = request.json['brinkId']
-    associatedCommits = getAssociatedCommits(brinkId)
-    return jsonify(commits=AssociatedCommits)
+@app.route('/get_commits/<int:brinkId>', methods=['GET'])
+def getFlippedBrinkCommits(brinkId):
+    associatedCommits = getAssociatedFlippedCommits(brinkId)
+    return jsonify(associatedCommits)
 
 
 '''
