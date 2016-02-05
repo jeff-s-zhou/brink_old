@@ -53,7 +53,7 @@ def commitUser():
 @app.route('/get_commits/<int:brinkId>', methods=['GET'])
 def getFlippedBrinkCommits(brinkId):
     associatedCommits = getAssociatedFlippedCommits(brinkId)
-    return jsonify(associatedCommits)
+    return jsonify(objects=associatedCommits)
 
 
 '''

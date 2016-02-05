@@ -1,10 +1,25 @@
+from sqlalchemy import func
+from itertools import groupby
+
 __author__ = 'Jeffrey'
 from models import Commit, Brink
 from shared import db
 
 def getAssociatedFlippedCommits(brinkId):
     commits = Commit.query.filter(Commit.brinkId == brinkId and Commit.flipped == True).all()
-    return commits
+    #sort by date first?
+    commits.sort(key=lambda c: c.flipTime)
+    #group into sublists by date
+    #convert to a string at this point because jsonifying objects is a pain in the ass
+    groupedByDate = [convertToString(k, g) for k, g in groupby(commits, lambda c: c.flipTime)]
+    return groupedByDate
+
+#TODO: refactor with user info for login system
+#TODO: eventually we'll want to return this as json objects
+def convertToString(dateTime, group):
+    groupList = list(group)
+    groupToString = ','.join([commit.name for commit in groupList])
+    return '{}: {}'.format(dateTime.isoformat(), groupToString)
 
 def updateBrink(name, brinkPoint, brinkId):
     #TODO: refactor to use an associated user
@@ -20,6 +35,7 @@ def updateBrink(name, brinkPoint, brinkId):
     #then the commit's brinkPoint is already reached, and should be flipped
     if(brinkPoint >= associatedBrink.brinkPoint):
         c.flipped = True
+        c.flipTime = func.now()
         db.session.commit()
         return True
     commits = Commit.query.filter(Commit.brinkId == brinkId).all()
@@ -36,6 +52,7 @@ def calculateFlip(commits, associatedBrink):
             #flip the associated commits
             for j in range(0, i):
                 commits[j].flipped = True
+                commits[j].flipTime = func.now()
             db.session.commit()
     return associatedBrink.flipped
 

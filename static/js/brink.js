@@ -8,6 +8,10 @@ var Route = require('react-router').Route;
 var Link = require('react-router').Link;
 var JQuery = require('jquery');
 
+//bootstrap
+var ListGroup = require('react-bootstrap/lib/ListGroup');
+var ListGroupItem = require('react-bootstrap/lib/ListGroupItem');
+
 //container for a brink
 module.exports = Brink = React.createClass({
     loadBrinkFromServer: function(brinkId) {
@@ -30,14 +34,14 @@ module.exports = Brink = React.createClass({
     loadCommitsFromServer: function(brinkId) {
         console.log(brinkId);
         JQuery.ajax({
-            //we use a special route and not the public api because we don't want the info public
+            //we use a special route and not the automagic api because we don't want all the info public
             url: ("/get_commits/" + brinkId),
             contentType: "application/json",
             dataType: "json",
             cache: false,
             success: function(data) {
-                console.log(data);
-                this.setState({flippedCommits: data});
+                console.log(data.objects);
+                this.setState({flippedCommits: data.objects});
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error("/get_commits", status, err.toString());
@@ -83,6 +87,7 @@ module.exports = Brink = React.createClass({
             <h1>{this.state.title}</h1>
             <p>{this.state.description}</p>
             <p>{"flipped: " + this.state.flipped.toString()}</p>
+            <Ticker data={this.state.flippedCommits}/>
             <CommitForm onCommitSubmit={this.handleCommitSubmit}
                         brinkId={this.props.params.brinkId} />
             </div>
@@ -92,15 +97,36 @@ module.exports = Brink = React.createClass({
 
 //displays ongoing flipped commits
 var Ticker = React.createClass({
-    getInitialState: function() {
-        return {name: ''}
-    },
     render: function() {
+    var commits = this.props.data.map(function(commit) {
+            return (
+                <CommitEntry
+                    key = {commit.id}
+                    time = {commit.flipTime}
+                    names = {commit.name}
+                />
+            );
+        });
     return (
-        <div>
+        <div className="ticker">
+            <ListGroup>
+                {commits}
+            </ListGroup>
         </div>
     );
   }
+});
+
+var CommitEntry = React.createClass({
+    render: function() {
+        return (
+         <div>
+            <ListGroupItem>
+                {this.props.time.toString() + this.props.names}
+            </ListGroupItem>
+        </div>
+        );
+    }
 });
 
 
