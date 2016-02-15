@@ -32,9 +32,9 @@ module.exports = Brink = React.createClass({
     },
 
     loadCommitsFromServer: function(brinkId) {
-        console.log(brinkId);
         JQuery.ajax({
             //we use a special route and not the automagic api because we don't want all the info public
+            //and it requires a lot of special processing
             url: ("/get_commits/" + brinkId),
             contentType: "application/json",
             dataType: "json",
@@ -42,6 +42,7 @@ module.exports = Brink = React.createClass({
             success: function(data) {
                 console.log(data.objects);
                 this.setState({flippedCommits: data.objects});
+                console.log(this.state.flippedCommits);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error("/get_commits", status, err.toString());
@@ -57,6 +58,8 @@ module.exports = Brink = React.createClass({
             type: "POST",
             data: JSON.stringify(commit),
             success: function(data) {
+                //reload the commit page
+                this.loadCommitsFromServer(commit.brinkId);
                 this.setState({flipped: data.flipped});
             }.bind(this),
             error: function(xhr, status, err) {
@@ -69,8 +72,9 @@ module.exports = Brink = React.createClass({
         this.loadBrinkFromServer(this.props.params.brinkId);
         this.loadCommitsFromServer(this.props.params.brinkId);
         //need to bind the context of this inside the function
-        this.setState({intervalId: setInterval(
-            function() {this.loadCommitsFromServer(this.props.params.brinkId); }.bind(this), 2000)});
+        //TODO: figure out why this doesn't take in the argument
+        /*this.setState({intervalId: setInterval(
+            function() {this.loadCommitsFromServer(this.props.params.brinkId); }.bind(this), 2000)});*/
     },
 
     componentWillUnmount() {
@@ -98,12 +102,12 @@ module.exports = Brink = React.createClass({
 //displays ongoing flipped commits
 var Ticker = React.createClass({
     render: function() {
+    console.log(this.props.data)
     var commits = this.props.data.map(function(commit) {
             return (
                 <CommitEntry
-                    key = {commit.id}
-                    time = {commit.flipTime}
-                    names = {commit.name}
+                    key = {commit[1]}
+                    entry = {commit[0]}
                 />
             );
         });
@@ -122,7 +126,7 @@ var CommitEntry = React.createClass({
         return (
          <div>
             <ListGroupItem>
-                {this.props.time.toString() + this.props.names}
+                {this.props.entry}
             </ListGroupItem>
         </div>
         );
