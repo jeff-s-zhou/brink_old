@@ -60,7 +60,7 @@ def calculateFlip(commits, associatedBrink):
                 commits[j].flipped = True
                 if(commits[j].flipTime == None):
                     commits[j].flipTime = func.now()
-                
+
             db.session.commit()
     return associatedBrink.flipped
 
