@@ -8,13 +8,14 @@ Install the following using npm (using --save in order to download the files) wi
 * browserify
 
 # Backend (Flask)
-Download sqlite (might actually be doable through pycharm, see step below)
 Download python 2.7, use virtualenv if you want a clean, separate python environment
 Install the following using pip
 * Flask
 * Flask-Restless
 * SQLAlchemy
 * Flask-SQLAlchemy
+
+Download sqlite (might actually be doable through pycharm, see step below)
 
 	
 # IDE (Pycharm)
